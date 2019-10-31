@@ -1,0 +1,24 @@
+base:
+    datadir: /data/database/toutiao/mtmodel
+    logdir: /data/logs/toutiao/mtmodel
+
+resources:
+    stopwords_path: resources/corpus/stopwords-zh.txt
+
+mysql:
+    host: 127.0.0.1
+    port: 3306
+    user: root
+    password: eXYhzAWjyvy8grwM
+    charset: utf8mb4
+
+mslog:
+    urls:
+        - "http://127.0.0.1:60200/central_srcs/"
+
+game_lda:
+    tfidf_model: tfidf_lda.pkl
+    lda_model: lda_lda.pkl
+
+game_keywords:
+    idf_path: 'gamedetail_idf.txt'

@@ -1,0 +1,25 @@
+[[source]]
+# url = "https://pypi.org/simple"
+url = "https://pypi.douban.com/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+zhon = "*"
+jieba = "*"
+nltk = "*"
+"bs4" = "*"
+hanziconv = "*"
+pandas = "0.20.3"
+pymysql = "*"
+tqdm = "*"
+sklearn = "*"
+bottleneck = "*"
+scipy = "*"
+PyYAML = "==3.12"
+
+[dev-packages]
+pylint = "*"
+
+[requires]
+python_version = "3.6"
