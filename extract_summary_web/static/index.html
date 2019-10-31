@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>摘要展示</title>
+<meta name='viewport' content='width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no'/>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+</head>
+<body>
+    <div class="container" id="app">
+        <table class="table table-striped table-bordered">
+            <caption>摘要展示</caption>
+            <thead>
+                <tr>
+                    <th>game_id</th>
+                    <th>game_name</th>
+                    <th>summaries</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="item in msgs">
+                    <td>{{item.game_id}}</td>
+                    <td>{{item.game_name}}</td>
+                    <td>
+                        <ul v-for="s in item.summaries">
+                            <li>{{s}}</li>
+                        </ul>
+                        <!-- {{item.summaries}} -->
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <button v-on:click="first_pages()" type="button" class="btn btn-primary">首页</button>    
+        <button v-on:click="last_pages()" type="button" class="btn btn-primary">上一页</button>
+        <button v-on:click="next_pages()" type="button" class="btn btn-primary">下一页</button>
+        <br />
+        <br />
+    </div>
+
+    
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+    <script>
+        // 
+        const getURLParameters = function(){
+            if(window.location.search == ''){
+                return {}
+            }else{
+                url = document.location.toString()
+                // 正则：
+                return url.match(/([^?=&]+)(=([^&]*))/g).reduce((a, v) => ((a[v.slice(0, v.indexOf('='))] = v.slice(v.indexOf('=') + 1)), a), {});
+            }    
+        };
+        var app = new Vue({
+            el: '#app',
+            data: {
+                msgs: []
+            },
+            methods:{
+                change_type: function(item, type){
+                    axios.post('/comment', {
+                        id: item.game_id,
+                        type: type
+                    }).then(
+                        function(response){
+                            if (response.data['res'] == 'ok') {
+                                item.type = type;    
+                            } else {
+                                console.log(response.data);   
+                            }
+                        }
+                    ).catch(function (error) {
+                        console.log(error);
+                    })
+                },
+                change_emotion: function(item, emotion){
+                    axios.post('/comment', {
+                        id: item.game_id,
+                        emotion: emotion
+                    }).then(
+                        function(response){
+                            if (response.data['res'] == 'ok') {
+                                item.emotion = emotion;
+                            } else {
+                                console.log(response.data);   
+                            }    
+                        }
+                    ).catch(function (error) {
+                        console.log(error);
+                    })
+                },
+                fill_comment: function(begin_id = 0, offset){
+                    that=this
+                    comment_url = '/comment/' + begin_id + '/' + offset
+                    axios.get(comment_url).then(
+                        function(response){
+                            if(response.data.length != 0){
+                                that.msgs = response.data
+                                begin_id = that.msgs[0].game_id
+                                window.history.pushState('', '', '?begin_id=' + begin_id + '&offset=' + offset)
+                            }
+
+                        }
+                    ).catch(function (error) {
+                            console.log(error);
+                    })
+                },
+                last_comment: function(end_id, offset=5){
+                    that=this
+                    comment_url = '/last_comment/' + end_id + '/' + offset
+                    axios.get(comment_url).then(
+                        function(response){
+                           if(response.data.length != 0){
+                                that.msgs = response.data;
+                                begin_id = that.msgs[0].game_id
+                                window.history.pushState('', '', '?begin_id=' + begin_id + '&offset=' + offset)
+                           }
+
+                        }
+                    ).catch(function (error) {
+                            console.log(error);
+                    })
+                },
+                first_pages:function(){
+                    that=this
+                    begin_id = 1
+                    offset =  5;
+                    this.fill_comment(begin_id, offset)
+                    
+                },
+                last_pages: function(){
+                    that = this
+                    end_id = parseInt(this.msgs[0].game_id) - 1
+                    //console.log("xxx"+end_id)
+                    this.last_comment(end_id, 5)
+                },
+                next_pages: function(){
+                    that=this
+                    // mags 
+                    begin_id = parseInt(this.msgs[this.msgs.length - 1].game_id) + 1
+                    //console.log("xxx"+begin_id)
+                    offset =  5;
+                    this.fill_comment(begin_id, offset)
+
+                }
+            }
+        });
+        d=getURLParameters();
+        if(d.begin_id){
+            begin_id = d.begin_id;
+        }else{
+            begin_id = 1;
+        }
+        if(d.offset){
+            offset = d.offset;
+        }else{
+            offset =  5;
+        }
+        // 
+        app.fill_comment(begin_id, offset);
+    </script>
+</body>
+</html>
