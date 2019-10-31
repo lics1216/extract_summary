@@ -21,7 +21,7 @@ HanLP.extractSummary(x, 1, r'[ ]')
 
 game_summaries_taptap4 是提取评论的测试juptyer测试。最终结果如下
 
-![summary1](image/summary1)
+![summary1](image/summary1.png)
 
 存在问题，提取出来的摘要有些语句不顺。
 
@@ -34,7 +34,7 @@ game_summaries_taptap4 是提取评论的测试juptyer测试。最终结果如�
 
 game_summaries_taptap_by_minig_feature 是提取评论的测试juptyer测试。最终结果如下
 
-![summary2](image/summary2)
+![summary2](image/summary2.png)
 
 ### web 页面
 extract_summary_web 是用来展示结果的web页面
